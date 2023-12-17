@@ -30,7 +30,6 @@ from aiogram.fsm.state import StatesGroup, State
 #FSM
 class Form(StatesGroup):
     name = State()
-
 #model
 def load_model(path_to_model):
     return YOLO(path_to_model)
@@ -85,7 +84,7 @@ dp = Dispatcher()
 bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
 
 
-#команда /start
+
 @dp.message(CommandStart())
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     """
@@ -105,9 +104,9 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
         selective=True
     )
     await state.set_state(Form.name)
-    await message.answer(f"Здравствуйте, {hbold(message.from_user.full_name)}! Выберите пожалуйста модель, которая будет использоваться для детекции производственных дефектов. По умолчанию используется 'Средняя'.", reply_markup=main_kb)
+    await message.answer(f"Здравствуйте, {hbold(message.from_user.full_name)}! Выберите пожалуйста модель, которая будет использоваться для детекции производственных дефектов. По умолчанию используется 'Средняя'. Модель может принимать форматы .bmp, .dng, .jpeg, .jpg, .mpo, .png, .tif, .tiff, .webp и .pfm.", reply_markup=main_kb)
 
-#Хэндлер текста
+
 @dp.message(F.text)
 async def text_handler(message: types.Message, state: FSMContext) -> None:
 
@@ -115,19 +114,17 @@ async def text_handler(message: types.Message, state: FSMContext) -> None:
         await state.update_data(model_name=message.text)
         
     try:
-        await message.answer("Пришлите, пожалуйста, фото для детекции производственных дефектов. Прикрепите фото как ДОКУМЕНТ, это улучшает качество детекции! Если Вы пользуетесь ботом в мобильном приложении, это можно сделать отправив его как файл. Чтобы выбрать модель, напишите команду /start")
+        await message.answer("Пришлите, пожалуйста, фото для детекции производственных дефектов. Прикрепите фото как ДОКУМЕНТ, это улучшает качество детекции! Если Вы пользуетесь ботом в мобильном приложении, это можно сделать отправив его как файл. Если вы хотите обработать несколько фото сразу, уберите галочку 'Group items'. Чтобы выбрать модель, напишите команду /start")
     except TypeError:
-        await message.answer("Пришлите, пожалуйста, фото для детекции производственных дефектов. Прикрепите фото как ДОКУМЕНТ, это улучшает качество детекции! Если Вы пользуетесь ботом в мобильном приложении, это можно сделать отправив его как файл. Чтобы выбрать модель, напишите команду /start")
+        await message.answer("Пришлите, пожалуйста, фото для детекции производственных дефектов. Прикрепите фото как ДОКУМЕНТ, это улучшает качество детекции! Если Вы пользуетесь ботом в мобильном приложении, это можно сделать отправив его как файл. Если вы хотите обработать несколько фото сразу, уберите галочку 'Group items'. Чтобы выбрать модель, напишите команду /start")
 
-#Хэндлер фото
 @dp.message(F.photo)
 async def handle_photo(message: types.Message) -> None:
     """
     Handler for processing photo messages
     """
-    await message.answer('Пришлите, пожалуйста, файл без сжатия! Это повысит качество детекции. Прикрепите фото как ДОКУМЕНТ. Если Вы пользуетесь ботом в мобильном приложении, это можно сделать отправив его как файл.')
-
-#Хэндлер документов        
+    await message.answer("Пришлите, пожалуйста, файл без сжатия! Это повысит качество детекции. Прикрепите фото как ДОКУМЕНТ. Если Вы пользуетесь ботом в мобильном приложении, это можно сделать отправив его как файл. Если вы хотите обработать несколько фото сразу, уберите галочку 'Group items'")
+        
 @dp.message(F.document)
 async def handle_doc(message: types.Message, state: FSMContext):
     document = message.document
